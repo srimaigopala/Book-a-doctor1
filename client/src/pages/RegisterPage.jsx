@@ -10,21 +10,22 @@ export default function RegisterPage() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState('patient'); // 'patient' or 'admin'
+  const [role, setRole] = useState('patient'); // 'patient' or 'doctor' (admins are seeded, not self-registered)
 
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
 
-  // Dual theme parameters dynamic assignment
+  // Theme switches by selected role
   const isPatient = role === 'patient';
-  const primaryBg = isPatient ? 'bg-blue-600' : 'bg-purple-600';
-  const primaryHover = isPatient ? 'hover:bg-blue-700' : 'hover:bg-purple-700';
-  const primaryText = isPatient ? 'text-blue-600' : 'text-purple-600';
-  const focusRing = isPatient ? 'focus:border-blue-500 focus:ring-blue-500' : 'focus:border-purple-500 focus:ring-purple-500';
-  const focusRingOutline = isPatient ? 'focus:ring-blue-500/20' : 'focus:ring-purple-500/20';
-  const iconColor = isPatient ? 'text-blue-500' : 'text-purple-500';
-  const badgeBg = isPatient ? 'bg-blue-50 text-blue-700 border-blue-150' : 'bg-purple-50 text-purple-700 border-purple-150';
+  const isDoctor = role === 'doctor';
+  const primaryBg = isPatient ? 'bg-blue-600' : 'bg-teal-600';
+  const primaryHover = isPatient ? 'hover:bg-blue-700' : 'hover:bg-teal-700';
+  const primaryText = isPatient ? 'text-blue-600' : 'text-teal-600';
+  const focusRing = isPatient ? 'focus:border-blue-500 focus:ring-blue-500' : 'focus:border-teal-500 focus:ring-teal-500';
+  const focusRingOutline = isPatient ? 'focus:ring-blue-500/20' : 'focus:ring-teal-500/20';
+  const iconColor = isPatient ? 'text-blue-500' : 'text-teal-500';
+  const badgeBg = isPatient ? 'bg-blue-50 text-blue-700 border-blue-200' : 'bg-teal-50 text-teal-700 border-teal-200';
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -64,7 +65,7 @@ export default function RegisterPage() {
 
   return (
     <div id="register-page-container" className="min-h-[85vh] flex items-center justify-center py-10 px-4 sm:px-6 lg:px-8 bg-slate-50 transition-colors duration-300">
-      <div className="max-w-md w-full bg-white p-8 rounded-3xl border border-slate-150 shadow-sm relative overflow-hidden transition-all duration-300">
+      <div className="max-w-md w-full bg-white p-8 rounded-3xl border border-slate-200 shadow-sm relative overflow-hidden transition-all duration-300">
         
         {/* Dynamic theme accent line at the top */}
         <div className={`absolute top-0 left-0 right-0 h-1.5 transition-all duration-300 ${primaryBg}`} />
@@ -73,18 +74,18 @@ export default function RegisterPage() {
         <div className="text-center mb-6">
           <div className={`inline-flex h-12 w-12 items-center justify-center rounded-2xl mb-3 transition-colors duration-300 ${badgeBg} border`}>
             {isPatient ? (
-              <Stethoscope className="h-6.5 w-6.5" />
+              <Stethoscope className="h-6 w-6" />
             ) : (
-              <Shield className="h-6.5 w-6.5" />
+              <Shield className="h-6 w-6" />
             )}
           </div>
           <h2 className="text-2xl font-black text-slate-900 tracking-tight font-display">
             Create Your Account
           </h2>
           <p className="text-xs text-slate-500 mt-1">
-            {isPatient 
-              ? 'Join as a Patient to book instant appointments' 
-              : 'Join as an Administrator to manage system operations'}
+            {isPatient
+              ? 'Join as a Patient to book instant appointments'
+              : 'Join as a Doctor — submit your details for admin verification'}
           </p>
         </div>
 
@@ -102,43 +103,43 @@ export default function RegisterPage() {
                 setRole('patient');
                 setErrorMsg('');
               }}
-              className={`flex items-center justify-center gap-2 py-3 px-4 rounded-2xl font-bold text-xs uppercase tracking-wider border-2 transition-all duration-250 cursor-pointer ${
+              className={`flex flex-col items-center justify-center gap-1 py-3 px-2 rounded-2xl font-bold text-[10px] uppercase tracking-wider border-2 transition-all duration-200 cursor-pointer ${
                 role === 'patient'
-                  ? 'bg-blue-50 text-blue-700 border-blue-600 shadow-xs shadow-blue-105/10'
-                  : 'bg-white text-slate-505 text-slate-500 border-slate-200 hover:border-slate-300 hover:bg-slate-50'
+                  ? 'bg-blue-50 text-blue-700 border-blue-600 shadow-xs'
+                  : 'bg-white text-slate-500 border-slate-200 hover:border-slate-300 hover:bg-slate-50'
               }`}
             >
               <User className={`h-4 w-4 shrink-0 ${role === 'patient' ? 'text-blue-600' : 'text-slate-400'}`} />
               Patient
             </button>
-            {/* Admin Option */}
+            {/* Doctor Option */}
             <button
               type="button"
-              id="role-admin-btn"
+              id="role-doctor-btn"
               onClick={() => {
-                setRole('admin');
+                setRole('doctor');
                 setErrorMsg('');
               }}
-              className={`flex items-center justify-center gap-2 py-3 px-4 rounded-2xl font-bold text-xs uppercase tracking-wider border-2 transition-all duration-250 cursor-pointer ${
-                role === 'admin'
-                  ? 'bg-purple-50 text-purple-700 border-purple-600 shadow-xs shadow-purple-105/10'
-                  : 'bg-white text-slate-505 text-slate-500 border-slate-200 hover:border-slate-300 hover:bg-slate-50'
+              className={`flex flex-col items-center justify-center gap-1 py-3 px-2 rounded-2xl font-bold text-[10px] uppercase tracking-wider border-2 transition-all duration-200 cursor-pointer ${
+                role === 'doctor'
+                  ? 'bg-teal-50 text-teal-700 border-teal-600 shadow-xs'
+                  : 'bg-white text-slate-500 border-slate-200 hover:border-slate-300 hover:bg-slate-50'
               }`}
             >
-              <Shield className={`h-4 w-4 shrink-0 ${role === 'admin' ? 'text-purple-600' : 'text-slate-400'}`} />
-              Admin
+              <Stethoscope className={`h-4 w-4 shrink-0 ${role === 'doctor' ? 'text-teal-600' : 'text-slate-400'}`} />
+              Doctor
             </button>
           </div>
         </div>
 
         {/* Messaging Alerts */}
         {errorMsg && (
-          <div className="mb-4 p-3.5 rounded-2xl bg-rose-50 border border-rose-150 text-rose-800 text-xs font-semibold animate-in fade-in duration-200" id="registration-error-toast">
+          <div className="mb-4 p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-semibold animate-in fade-in duration-200" id="registration-error-toast">
             {errorMsg}
           </div>
         )}
         {successMsg && (
-          <div className="mb-4 p-3.5 rounded-2xl bg-emerald-50 border border-emerald-150 text-emerald-800 text-xs font-semibold flex items-center gap-2 animate-in fade-in duration-200" id="registration-success-toast">
+          <div className="mb-4 p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold flex items-center gap-2 animate-in fade-in duration-200" id="registration-success-toast">
             <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
             <span>{successMsg}</span>
           </div>
@@ -158,8 +159,8 @@ export default function RegisterPage() {
                 value={name}
                 id="reg-input-name"
                 onChange={(e) => setName(e.target.value)}
-                placeholder={isPatient ? "Srimai" : "System Administrator"}
-                className={`w-full pl-10.5 pr-4 py-3 text-xs bg-slate-5/40 bg-slate-50 hover:bg-slate-100/70 focus:bg-white text-slate-900 rounded-xl border border-slate-200 outline-none outline-hidden focus:ring-2 ${focusRing} ${focusRingOutline} transition-all duration-200`}
+                placeholder={isPatient ? "Srimai" : "Rajesh Patel"}
+                className={`w-full pl-10 pr-4 py-3 text-xs bg-slate-50 hover:bg-slate-100/70 focus:bg-white text-slate-900 rounded-xl border border-slate-200 outline-none outline-hidden focus:ring-2 ${focusRing} ${focusRingOutline} transition-all duration-200`}
               />
             </div>
           </div>
@@ -175,8 +176,8 @@ export default function RegisterPage() {
                 value={email}
                 id="reg-input-email"
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder={isPatient ? "srimai@gmail.com" : "admin.ops@bookadoctor.com"}
-                className={`w-full pl-10.5 pr-4 py-3 text-xs bg-slate-5/40 bg-slate-50 hover:bg-slate-100/70 focus:bg-white text-slate-900 rounded-xl border border-slate-200 outline-none outline-hidden focus:ring-2 ${focusRing} ${focusRingOutline} transition-all duration-200`}
+                placeholder={isPatient ? "srimai@gmail.com" : "dr.rajesh@clinic.com"}
+                className={`w-full pl-10 pr-4 py-3 text-xs bg-slate-50 hover:bg-slate-100/70 focus:bg-white text-slate-900 rounded-xl border border-slate-200 outline-none outline-hidden focus:ring-2 ${focusRing} ${focusRingOutline} transition-all duration-200`}
               />
             </div>
           </div>
@@ -193,7 +194,7 @@ export default function RegisterPage() {
                 id="reg-input-password"
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className={`w-full pl-10.5 pr-4 py-3 text-xs bg-slate-5/40 bg-slate-50 hover:bg-slate-100/70 focus:bg-white text-slate-900 rounded-xl border border-slate-200 outline-none outline-hidden focus:ring-2 ${focusRing} ${focusRingOutline} transition-all duration-200`}
+                className={`w-full pl-10 pr-4 py-3 text-xs bg-slate-50 hover:bg-slate-100/70 focus:bg-white text-slate-900 rounded-xl border border-slate-200 outline-none outline-hidden focus:ring-2 ${focusRing} ${focusRingOutline} transition-all duration-200`}
               />
             </div>
           </div>

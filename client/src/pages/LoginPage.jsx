@@ -31,9 +31,11 @@ export default function LoginPage() {
         setSuccessMsg('Successfully authenticated! Redirecting...');
         setTimeout(() => {
           if (res.user.role === 'admin') {
-            navigate('/dashboard');
+            navigate('/admin-dashboard');
+          } else if (res.user.role === 'doctor') {
+            navigate('/doctor-dashboard');
           } else {
-            navigate('/');
+            navigate('/patient-dashboard');
           }
         }, 1000);
       } else {
@@ -53,7 +55,7 @@ export default function LoginPage() {
 
   return (
     <div id="login-page-container" className="min-h-[80vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full bg-white p-8 rounded-2xl border border-slate-150 shadow-sm">
+      <div className="max-w-md w-full bg-white p-8 rounded-2xl border border-slate-200 shadow-sm">
         
         {/* Brand Header */}
         <div className="text-center mb-8">
@@ -70,12 +72,12 @@ export default function LoginPage() {
 
         {/* Errors/Success toasts */}
         {errorMsg && (
-          <div className="mb-4 p-3.5 rounded-lg bg-rose-50 border border-rose-150 text-red-700 text-sm font-semibold">
+          <div className="mb-4 p-3.5 rounded-lg bg-rose-50 border border-rose-200 text-red-700 text-sm font-semibold">
             {errorMsg}
           </div>
         )}
         {successMsg && (
-          <div className="mb-4 p-3.5 rounded-lg bg-emerald-50 border border-emerald-150 text-emerald-800 text-sm font-semibold flex items-center gap-2">
+          <div className="mb-4 p-3.5 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm font-semibold flex items-center gap-2">
             <CheckCircle className="h-4 w-4 text-emerald-600 shrink-0" />
             {successMsg}
           </div>
@@ -133,8 +135,8 @@ export default function LoginPage() {
         </div>
 
         {/* Demo shortcuts */}
-        <div className="mt-8 pt-6 border-t border-slate-150 bg-slate-50/70 p-4 rounded-xl">
-          <h4 className="text-xs font-bold uppercase tracking-wider text-slate-650 flex items-center gap-1.5 text-slate-700 mb-3 select-none">
+        <div className="mt-8 pt-6 border-t border-slate-200 bg-slate-50/70 p-4 rounded-xl">
+          <h4 className="text-xs font-bold uppercase tracking-wider text-slate-600 flex items-center gap-1.5 text-slate-700 mb-3 select-none">
             <HelpCircle className="h-3.5 w-3.5 text-blue-500" /> Demo Credentials
           </h4>
           <div className="grid grid-cols-2 gap-2 text-xs">
@@ -149,12 +151,12 @@ export default function LoginPage() {
             </button>
             <button
               type="button"
-              onClick={() => handleShortcutLogin('admin@bookadoctor.com', 'admin123')}
+              onClick={() => handleShortcutLogin('admin@bookadoctor.com', 'Admin@12345')}
               className="px-2.5 py-2 text-left bg-white hover:bg-purple-50 border border-slate-200 hover:border-purple-200 rounded-lg text-slate-700 font-semibold cursor-pointer transition-all"
             >
               <div className="text-[10px] uppercase text-purple-600 font-bold">Role: Admin</div>
               <div className="truncate">admin@bookadoctor.com</div>
-              <div className="text-slate-400 text-[10px]">Pass: admin123</div>
+              <div className="text-slate-400 text-[10px]">Pass: Admin@12345</div>
             </button>
           </div>
         </div>

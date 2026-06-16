@@ -12,9 +12,10 @@ import DoctorsPage from './pages/DoctorsPage.jsx';
 import DoctorDetailsPage from './pages/DoctorDetailsPage.jsx';
 import BookAppointmentPage from './pages/BookAppointmentPage.jsx';
 import AppointmentsPage from './pages/AppointmentsPage.jsx';
-import DashboardPage from './pages/DashboardPage.jsx';
-import AddDoctorPage from './pages/AddDoctorPage.jsx';
-import EditDoctorPage from './pages/EditDoctorPage.jsx';
+import PatientDashboard from './pages/PatientDashboard.jsx';
+import DoctorDashboard from './pages/DoctorDashboard.jsx';
+import AdminDashboard from './pages/AdminDashboard.jsx';
+import DoctorOnboardingPage from './pages/DoctorOnboardingPage.jsx';
 import NotFoundPage from './pages/NotFoundPage.jsx';
 
 export default function App() {
@@ -30,10 +31,24 @@ export default function App() {
               <Route path="/" element={<HomePage id="page-home" />} />
               <Route path="/login" element={<LoginPage id="page-login" />} />
               <Route path="/register" element={<RegisterPage id="page-register" />} />
-              <Route path="/doctors" element={<DoctorsPage id="page-doctors" />} />
-              <Route path="/doctors/:id" element={<DoctorDetailsPage id="page-doctor-details" />} />
 
               {/* Protected Routes */}
+              <Route 
+                path="/doctors" 
+                element={
+                  <ProtectedRoute>
+                    <DoctorsPage id="page-doctors" />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/doctors/:id" 
+                element={
+                  <ProtectedRoute>
+                    <DoctorDetailsPage id="page-doctor-details" />
+                  </ProtectedRoute>
+                } 
+              />
               <Route 
                 path="/appointments" 
                 element={
@@ -42,45 +57,55 @@ export default function App() {
                   </ProtectedRoute>
                 } 
               />
-              <Route 
-                path="/book-appointment" 
+              <Route
+                path="/book-appointment"
                 element={
-                  <ProtectedRoute>
+                  <ProtectedRoute allowedRoles={['patient']}>
                     <BookAppointmentPage id="page-book-appointment-base" />
                   </ProtectedRoute>
-                } 
+                }
               />
-              <Route 
-                path="/book-appointment/:doctorId" 
+              <Route
+                path="/book-appointment/:doctorId"
                 element={
-                  <ProtectedRoute>
+                  <ProtectedRoute allowedRoles={['patient']}>
                     <BookAppointmentPage id="page-book-appointment-id" />
                   </ProtectedRoute>
-                } 
+                }
               />
-              <Route 
-                path="/dashboard" 
+              
+              {/* Specialized Dashboards */}
+              <Route
+                path="/patient-dashboard"
                 element={
-                  <ProtectedRoute>
-                    <DashboardPage id="page-dashboard" />
+                  <ProtectedRoute allowedRoles={['patient']}>
+                    <PatientDashboard id="page-patient-dashboard" />
                   </ProtectedRoute>
-                } 
+                }
               />
-              <Route 
-                path="/add-doctor" 
+              <Route
+                path="/doctor-dashboard"
                 element={
-                  <ProtectedRoute>
-                    <AddDoctorPage id="page-add-doctor" />
+                  <ProtectedRoute allowedRoles={['doctor']}>
+                    <DoctorDashboard id="page-doctor-dashboard" />
                   </ProtectedRoute>
-                } 
+                }
               />
-              <Route 
-                path="/edit-doctor/:id" 
+              <Route
+                path="/admin-dashboard"
                 element={
-                  <ProtectedRoute>
-                    <EditDoctorPage id="page-edit-doctor" />
+                  <ProtectedRoute allowedRoles={['admin']}>
+                    <AdminDashboard id="page-admin-dashboard" />
                   </ProtectedRoute>
-                } 
+                }
+              />
+              <Route
+                path="/onboarding"
+                element={
+                  <ProtectedRoute allowedRoles={['doctor']}>
+                    <DoctorOnboardingPage id="page-doctor-onboarding" />
+                  </ProtectedRoute>
+                }
               />
 
               {/* Catch All */}

@@ -2,35 +2,36 @@ const mongoose = require("mongoose");
 
 const doctorSchema = new mongoose.Schema(
   {
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+
     name: {
-      type: String,
-      required: true,
-    },
-
-    email: {
-      type: String,
-      required: true,
-      unique: true,
-    },
-
-    password: {
       type: String,
       required: true,
     },
 
     specialization: {
       type: String,
-      required: true,
+      default: "",
     },
 
     experience: {
       type: Number,
-      required: true,
+      default: 0,
     },
 
     fees: {
       type: Number,
-      required: true,
+      default: 0,
+    },
+
+    status: {
+      type: String,
+      enum: ["incomplete", "pending", "approved", "rejected"],
+      default: "incomplete",
     },
 
     available: {

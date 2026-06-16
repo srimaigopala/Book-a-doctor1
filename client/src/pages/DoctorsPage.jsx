@@ -1,13 +1,10 @@
 import { useState, useEffect } from 'react';
-import { Search, Stethoscope, Briefcase, Filter, RefreshCw, Plus } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Search, Stethoscope, Filter, RefreshCw } from 'lucide-react';
 import api from '../api/axios.js';
 import DoctorCard from '../components/DoctorCard.jsx';
 import Loader from '../components/Loader.jsx';
-import { useAuth } from '../context/AuthContext.jsx';
 
 export default function DoctorsPage() {
-  const { isAdmin } = useAuth();
   const [doctors, setDoctors] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedSpecialty, setSelectedSpecialty] = useState('All');
@@ -63,20 +60,11 @@ export default function DoctorsPage() {
           <div className="flex gap-2">
             <button
               onClick={fetchDoctorsList}
-              className="p-3 bg-white border border-slate-200 hover:border-slate-350 rounded-2xl text-slate-600 hover:text-slate-900 transition-colors shadow-2xs shrink-0 cursor-pointer"
+              className="p-3 bg-white border border-slate-200 hover:border-slate-300 rounded-2xl text-slate-600 hover:text-slate-900 transition-colors shadow-2xs shrink-0 cursor-pointer"
               title="Refresh Listings"
             >
               <RefreshCw className="h-4.5 w-4.5" />
             </button>
-            {isAdmin && (
-              <Link
-                to="/add-doctor"
-                className="inline-flex items-center gap-1.5 px-5 py-3 bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs uppercase tracking-wider rounded-2xl shadow-md cursor-pointer"
-              >
-                <Plus className="h-4 w-4 stroke-[3px]" />
-                Add Physician
-              </Link>
-            )}
           </div>
         </div>
 
@@ -90,7 +78,7 @@ export default function DoctorsPage() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search physicians by name or clinical specialty..."
-                className="w-full pl-11 pr-4 py-3.5 text-sm bg-slate-50 hover:bg-slate-100/70 focus:bg-white text-slate-900 rounded-2xl border border-slate-150 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-hidden transition-all duration-155"
+                className="w-full pl-11 pr-4 py-3.5 text-sm bg-slate-50 hover:bg-slate-100/70 focus:bg-white text-slate-900 rounded-2xl border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-hidden transition-all duration-155"
               />
             </div>
           </div>
@@ -108,7 +96,7 @@ export default function DoctorsPage() {
                   className={`px-4 py-1.5 font-extrabold text-[10px] uppercase tracking-wider rounded-full border transition-all cursor-pointer ${
                     selectedSpecialty === spec
                       ? 'bg-blue-600 text-white border-blue-600 shadow-xs shadow-blue-150'
-                      : 'bg-slate-50 hover:bg-slate-105 text-slate-550 border-slate-200'
+                      : 'bg-slate-50 hover:bg-slate-100 text-slate-500 border-slate-200'
                   }`}
                 >
                   {spec}
@@ -121,10 +109,9 @@ export default function DoctorsPage() {
         {/* Notification Warning */}
         {errorMsg && (
           <div className="mb-6 p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-sm font-semibold flex items-center gap-2">
-            <Stethoscope className="h-5 w-5 text-amber-650" />
+            <Stethoscope className="h-5 w-5 text-amber-600" />
             <div>
               <p>{errorMsg}</p>
-              <span className="text-xs font-normal text-amber-600">Running in Demo Fallback mode. Changes will save locally inside current browser storage session.</span>
             </div>
           </div>
         )}
@@ -133,7 +120,7 @@ export default function DoctorsPage() {
         {loading ? (
           <Loader message="Loading clinician schedules from database registry..." />
         ) : filteredDoctors.length === 0 ? (
-          <div className="bg-white rounded-2xl border border-slate-150 p-16 text-center shadow-3xs">
+          <div className="bg-white rounded-2xl border border-slate-200 p-16 text-center shadow-xs">
             <div className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-slate-50 text-slate-400 mb-3">
               <Search className="h-6 w-6" />
             </div>
@@ -144,7 +131,7 @@ export default function DoctorsPage() {
                 setSearchQuery('');
                 setSelectedSpecialty('All');
               }}
-              className="mt-4 px-4 py-2 font-bold text-sm text-blue-600 hover:text-white bg-blue-50 hover:bg-blue-600 border border-blue-105 rounded-xl transition-all cursor-pointer"
+              className="mt-4 px-4 py-2 font-bold text-sm text-blue-600 hover:text-white bg-blue-50 hover:bg-blue-600 border border-blue-100 rounded-xl transition-all cursor-pointer"
             >
               Clear Filters
             </button>

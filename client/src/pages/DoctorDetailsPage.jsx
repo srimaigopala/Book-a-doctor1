@@ -3,13 +3,11 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Stethoscope, Calendar, IndianRupee, Briefcase, ChevronLeft, ShieldCheck, ArrowRight, Clock, ToggleLeft } from 'lucide-react';
 import api from '../api/axios.js';
 import Loader from '../components/Loader.jsx';
-import { useAuth } from '../context/AuthContext.jsx';
 
 export default function DoctorDetailsPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { user, isAdmin } = useAuth();
-  
+
   const [doctor, setDoctor] = useState(null);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState('');
@@ -43,8 +41,8 @@ export default function DoctorDetailsPage() {
   if (errorMsg || !doctor) {
     return (
       <div className="max-w-2xl mx-auto px-4 py-16 text-center">
-        <div className="bg-white p-8 rounded-2xl border border-slate-150 shadow-sm space-y-4">
-          <p className="text-red-650 font-semibold text-slate-800">{errorMsg || 'Doctor details unavailable.'}</p>
+        <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+          <p className="text-red-600 font-semibold text-slate-800">{errorMsg || 'Doctor details unavailable.'}</p>
           <Link
             to="/doctors"
             className="inline-flex items-center gap-2 text-blue-600 font-bold hover:underline"
@@ -63,13 +61,13 @@ export default function DoctorDetailsPage() {
         {/* Breadcrumb Back Button */}
         <button
           onClick={() => navigate('/doctors')}
-          className="inline-flex items-center gap-1.5 text-sm font-semibold text-slate-650 hover:text-blue-600 mb-6 cursor-pointer"
+          className="inline-flex items-center gap-1.5 text-sm font-semibold text-slate-600 hover:text-blue-600 mb-6 cursor-pointer"
         >
           <ChevronLeft className="h-4.5 w-4.5" /> Back to Physicians
         </button>
 
         {/* Profile Card Block */}
-        <div className="bg-white rounded-3xl border border-slate-150 shadow-sm overflow-hidden grid grid-cols-1 md:grid-cols-12">
+        <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden grid grid-cols-1 md:grid-cols-12">
           
           {/* Avatar side */}
           <div className="col-span-1 md:col-span-4 bg-gradient-to-tr from-slate-900 to-blue-900 p-8 flex flex-col items-center justify-center text-center text-white">
@@ -77,7 +75,7 @@ export default function DoctorDetailsPage() {
               {doctor.name ? doctor.name.split(' ').map(n => n[0]).join('').substring(0, 3).toUpperCase() : 'DR'}
             </div>
             <h2 className="text-xl font-bold">{doctor.name}</h2>
-            <span className="text-xs font-semibold uppercase tracking-wider text-sky-305 text-sky-300 bg-sky-950/55 px-2.5 py-0.5 rounded-md mt-1.5 border border-sky-900">
+            <span className="text-xs font-semibold uppercase tracking-wider text-sky-300 text-sky-300 bg-sky-950/55 px-2.5 py-0.5 rounded-md mt-1.5 border border-sky-900">
               {doctor.specialization}
             </span>
           </div>
@@ -110,14 +108,14 @@ export default function DoctorDetailsPage() {
             <div className="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-100">
               
               <div className="space-y-1">
-                <span className="text-xs font-bold text-slate-450 uppercase tracking-wider text-slate-500 flex items-center gap-1">
+                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider text-slate-500 flex items-center gap-1">
                   <Briefcase className="h-3.5 w-3.5 text-slate-400" /> Professional Experience
                 </span>
                 <p className="text-base font-bold text-slate-900">{doctor.experience} Years Active Practice</p>
               </div>
 
               <div className="space-y-1">
-                <span className="text-xs font-bold text-slate-450 uppercase tracking-wider text-slate-500 flex items-center gap-1">
+                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider text-slate-500 flex items-center gap-1">
                   <span className="text-slate-400 font-bold">₹</span> Consulting Service Fee
                 </span>
                 <p className="text-base font-bold text-slate-900">₹{doctor.fees} / consultation</p>
@@ -126,7 +124,7 @@ export default function DoctorDetailsPage() {
             </div>
 
             {/* Clinical highlights info list */}
-            <div className="space-y-3.5 pt-2 text-sm text-slate-650 text-slate-600">
+            <div className="space-y-3.5 pt-2 text-sm text-slate-600 text-slate-600">
               <div className="flex gap-2.5 items-start">
                 <ShieldCheck className="h-5 w-5 text-emerald-500 shrink-0 mt-0.5" />
                 <p><strong>Clinical Auditing:</strong> Board-certified specialist equipped to manage advanced medical diagnoses, chronic condition treatment, and general clinical triage.</p>
@@ -140,7 +138,7 @@ export default function DoctorDetailsPage() {
             {/* Book Now trigger line */}
             <div className="border-t border-slate-100 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
               <div>
-                <p className="text-xs text-slate-450 text-slate-500">Scheduled Consulting Hours</p>
+                <p className="text-xs text-slate-400 text-slate-500">Scheduled Consulting Hours</p>
                 <p className="text-sm font-bold text-slate-800">Monday &ndash; Saturday, 09:00 AM &ndash; 05:30 PM</p>
               </div>
 
@@ -166,19 +164,6 @@ export default function DoctorDetailsPage() {
           </div>
 
         </div>
-
-        {/* Administration quick trigger if Admin */}
-        {isAdmin && (
-          <div className="mt-6 p-4 rounded-2xl bg-purple-50 text-purple-800 border border-purple-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-sm">
-            <p><strong>Administrative Portal Shortcuts:</strong> You own permissions to adjust medical service pricing and availability parameters.</p>
-            <Link
-              to={`/edit-doctor/${doctor._id}`}
-              className="text-purple-700 hover:text-purple-900 border border-purple-300 hover:border-purple-400 px-3.5 py-1.5 rounded-xl font-bold bg-white text-xs whitespace-nowrap self-start sm:self-center"
-            >
-              Configure Doctor Profile
-            </Link>
-          </div>
-        )}
 
       </div>
     </div>

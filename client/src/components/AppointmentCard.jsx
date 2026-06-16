@@ -23,6 +23,7 @@ export default function AppointmentCard({
     doctor,
     appointmentDate,
     appointmentTime,
+    reason,
     status,
   } = appointment;
 
@@ -88,7 +89,7 @@ export default function AppointmentCard({
           <div>
             <div className="flex items-center gap-2 flex-wrap">
               <span className="font-extrabold text-slate-900 flex items-center gap-1.5 text-base">
-                <Stethoscope className="h-4.5 w-4.5 text-blue-650" />
+                <Stethoscope className="h-4.5 w-4.5 text-blue-600" />
                 {doctorDisplayName}
               </span>
 
@@ -120,37 +121,21 @@ export default function AppointmentCard({
                 </span>
               )}
             </div>
+
+            {reason && (
+              <p className="text-xs text-slate-500 mt-2 max-w-md leading-relaxed">
+                <span className="font-semibold text-slate-700">Reason:</span> {reason}
+              </p>
+            )}
           </div>
         </div>
 
         {/* Buttons */}
         <div className="flex items-center gap-2 sm:self-center">
-          
-          {isAdmin && status === "Pending" && (
-            <>
-              <button
-                onClick={() =>
-                  onStatusChange(_id, "Approved")
-                }
-                className="px-4 py-2 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-full transition-all shadow-xs cursor-pointer"
-              >
-                Approve
-              </button>
 
-              <button
-                onClick={() =>
-                  onStatusChange(_id, "Rejected")
-                }
-                className="px-4 py-2 text-xs font-bold text-white bg-rose-600 hover:bg-rose-700 rounded-full transition-all shadow-xs cursor-pointer"
-              >
-                Reject
-              </button>
-            </>
-          )}
-
+          {/* Patients may cancel their own pending/approved appointments */}
           {!isAdmin &&
-            (status === "Pending" ||
-              status === "Approved") && (
+            (status === "Pending" || status === "Approved") && (
               <button
                 onClick={() => onCancel(_id)}
                 className="px-4 py-2 text-xs font-bold text-slate-700 hover:text-white bg-slate-100 hover:bg-red-600 rounded-full border border-transparent transition-all cursor-pointer"
@@ -159,14 +144,13 @@ export default function AppointmentCard({
               </button>
             )}
 
-          {isAdmin && status === "Approved" && (
+          {/* Admin oversight: may cancel an active booking, but accept/reject is the doctor's call */}
+          {isAdmin && (status === "Pending" || status === "Approved") && (
             <button
-              onClick={() =>
-                onStatusChange(_id, "Cancelled")
-              }
+              onClick={() => onStatusChange(_id, "Cancelled")}
               className="px-4 py-2 text-xs font-bold text-slate-700 hover:text-white bg-slate-100 hover:bg-red-600 rounded-full transition-all cursor-pointer"
             >
-              Cancel Block
+              Cancel (Admin)
             </button>
           )}
         </div>

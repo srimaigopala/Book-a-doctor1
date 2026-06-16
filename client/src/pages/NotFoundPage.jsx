@@ -4,7 +4,7 @@ import { ShieldQuestion, Home, ArrowLeft } from 'lucide-react';
 export default function NotFoundPage() {
   return (
     <div id="not-found-container" className="min-h-[75vh] flex flex-col items-center justify-center px-4 py-16 text-center bg-slate-50">
-      <div className="max-w-md bg-white p-8 rounded-3xl border border-slate-150 shadow-sm space-y-6">
+      <div className="max-w-md bg-white p-8 rounded-3xl border border-slate-200 shadow-sm space-y-6">
         
         {/* Visual Graphic Icon */}
         <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 animate-bounce">

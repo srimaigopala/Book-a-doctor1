@@ -17,6 +17,7 @@ export default function BookAppointmentPage() {
   // Form fields
   const [appointmentDate, setAppointmentDate] = useState('');
   const [appointmentTime, setAppointmentTime] = useState('10:00 AM'); // Default slot
+  const [reason, setReason] = useState('');
 
   // UI state
   const [loading, setLoading] = useState(true);
@@ -96,17 +97,22 @@ export default function BookAppointmentPage() {
       setErrorMsg('Please select a preferred consulting time slot.');
       return;
     }
+    if (!reason.trim()) {
+      setErrorMsg('Please describe the reason for your visit so the doctor can review it.');
+      return;
+    }
 
     setSubmitting(true);
     setErrorMsg('');
     setSuccessMsg('');
 
     try {
+      // The patient is taken from the auth token on the server, never sent from here.
       const payload = {
-        user: user.id || user._id,
         doctor: selectedDoctorId,
         appointmentDate,
-        appointmentTime
+        appointmentTime,
+        reason: reason.trim()
       };
 
       const res = await api.post('/api/appointments/book', payload);
@@ -137,13 +143,13 @@ export default function BookAppointmentPage() {
         {/* Back navigation */}
         <button
           onClick={() => navigate(-1)}
-          className="inline-flex items-center gap-1.25 text-sm font-semibold text-slate-650 hover:text-blue-600 mb-6 cursor-pointer"
+          className="inline-flex items-center gap-1.25 text-sm font-semibold text-slate-600 hover:text-blue-600 mb-6 cursor-pointer"
         >
           <ChevronLeft className="h-4.5 w-4.5" /> Back to Profile
         </button>
 
         {/* Core block containing booking form */}
-        <div className="bg-white rounded-3xl border border-slate-150 p-6 md:p-8 shadow-sm">
+        <div className="bg-white rounded-3xl border border-slate-200 p-6 md:p-8 shadow-sm">
           
           {/* Header */}
           <div className="border-b border-slate-100 pb-5 mb-6 text-center sm:text-left">
@@ -156,13 +162,13 @@ export default function BookAppointmentPage() {
 
           {/* Feedback banners */}
           {errorMsg && (
-            <div className="mb-5 p-3.5 rounded-xl bg-rose-50 border border-rose-150 text-red-750 text-red-700 text-sm font-semibold flex items-center gap-2">
+            <div className="mb-5 p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-red-700 text-red-700 text-sm font-semibold flex items-center gap-2">
               <ShieldAlert className="h-5 w-5 shrink-0" />
               <span>{errorMsg}</span>
             </div>
           )}
           {successMsg && (
-            <div className="mb-5 p-3.5 rounded-xl bg-emerald-50 border border-emerald-150 text-emerald-800 text-sm font-semibold flex items-center gap-2">
+            <div className="mb-5 p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm font-semibold flex items-center gap-2">
               <CheckCircle className="h-5 w-5 shrink-0 text-emerald-600" />
               <span>{successMsg}</span>
             </div>
@@ -191,7 +197,7 @@ export default function BookAppointmentPage() {
                 </select>
               </div>
               {doctorId && (
-                <p className="text-[11px] text-slate-450 text-emerald-600 font-semibold mt-1">✓ Lock set on: {selectedDocDetails?.name || 'Practitioner'}</p>
+                <p className="text-[11px] text-slate-400 text-emerald-600 font-semibold mt-1">✓ Lock set on: {selectedDocDetails?.name || 'Practitioner'}</p>
               )}
             </div>
 
@@ -203,7 +209,7 @@ export default function BookAppointmentPage() {
                 </div>
                 <div>
                   <h4 className="text-sm font-bold text-slate-900">{selectedDocDetails.name}</h4>
-                  <div className="flex gap-2.5 text-xs text-slate-550 text-slate-650 flex-wrap">
+                  <div className="flex gap-2.5 text-xs text-slate-500 text-slate-600 flex-wrap">
                     <span className="font-semibold text-blue-700 uppercase">{selectedDocDetails.specialization}</span>
                     <span>&bull;</span>
                     <span>{selectedDocDetails.experience} Years Active Practice</span>
@@ -254,12 +260,26 @@ export default function BookAppointmentPage() {
               </div>
             </div>
 
+            {/* 4. Reason for visit */}
+            <div className="space-y-2">
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-600">Reason for Visit</label>
+              <textarea
+                required
+                rows={3}
+                value={reason}
+                onChange={(e) => setReason(e.target.value)}
+                placeholder="Briefly describe your symptoms or the reason for this consultation..."
+                className="w-full px-4 py-3 text-sm bg-slate-50 text-slate-900 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all resize-none"
+              />
+              <p className="text-[11px] text-slate-400">This is shared with the doctor to help them review your request.</p>
+            </div>
+
             {/* Submit Action */}
             <div className="pt-4">
               <button
                 type="submit"
                 disabled={submitting}
-                className="w-full py-4 font-bold text-white bg-blue-600 hover:bg-blue-700 disabled:bg-blue-450 rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full py-4 font-bold text-white bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
                 {submitting ? 'Scheduling consultation...' : 'Proceed with Booking'}
                 <ArrowRight className="h-4.5 w-4.5" />

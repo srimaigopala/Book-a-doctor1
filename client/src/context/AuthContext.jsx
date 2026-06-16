@@ -29,48 +29,23 @@ export function AuthProvider({ children }) {
     }
   }, []);
 
-  // Login handler
+  // Login handler — a single endpoint authenticates patients, doctors and admins.
   const login = async (email, password) => {
     setLoading(true);
     setMessage(null);
     try {
-      // Setup demo bypass logic to support Doctor role instantly in previews
-      if (email.toLowerCase() === 'doctor@bookadoctor.com' && password === 'doctor123') {
-        const docUser = {
-          id: 'doc123',
-          _id: 'doc123',
-          name: 'Dr. Rajesh Patel',
-          email: 'doctor@bookadoctor.com',
-          role: 'doctor',
-          specialization: 'Cardiologist',
-          experience: 12,
-          fees: 800,
-          available: true
-        };
-        const docToken = 'demo-doctor-auth-jwt-token-xyz';
-        setToken(docToken);
-        setUser(docUser);
-        localStorage.setItem('doctor_token', docToken);
-        localStorage.setItem('doctor_user', JSON.stringify(docUser));
-        return { success: true, message: 'Doctor authenticated successfully!', user: docUser };
-      }
-
       const res = await api.post('/api/auth/login', { email, password });
       if (res.data.success) {
         const { token: userToken, user: userProfile } = res.data;
-        
-        // Save to state
+
         setToken(userToken);
         setUser(userProfile);
-        
-        // Save to localStorage
         localStorage.setItem('doctor_token', userToken);
         localStorage.setItem('doctor_user', JSON.stringify(userProfile));
-        
+
         return { success: true, message: res.data.message || 'Login successful', user: userProfile };
-      } else {
-        return { success: false, message: res.data.message || 'Invalid credentials' };
       }
+      return { success: false, message: res.data.message || 'Invalid credentials' };
     } catch (err) {
       const errorMsg = err.response?.data?.message || 'Login request failed. Please check credentials.';
       return { success: false, message: errorMsg };
@@ -127,7 +102,7 @@ export function AuthProvider({ children }) {
 export function useAuth() {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth must be styled and invoked within an AuthProvider');
+    throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
 }

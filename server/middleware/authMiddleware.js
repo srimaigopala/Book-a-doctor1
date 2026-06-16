@@ -34,4 +34,17 @@ const protect = async (req, res, next) => {
   }
 };
 
-module.exports = { protect };
+// Role-based authorization. Use after `protect`, e.g. requireRole("admin").
+const requireRole = (...roles) => {
+  return (req, res, next) => {
+    if (!req.user || !roles.includes(req.user.role)) {
+      return res.status(403).json({
+        success: false,
+        message: "Forbidden: you do not have permission to perform this action",
+      });
+    }
+    next();
+  };
+};
+
+module.exports = { protect, requireRole };

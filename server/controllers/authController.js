@@ -1,4 +1,6 @@
 const User = require("../models/User");
+const Doctor = require("../models/Doctor");
+const AuditLog = require("../models/AuditLog");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
@@ -23,6 +25,11 @@ const registerUser = async (req, res) => {
       });
     }
 
+    // SECURITY: never trust a client-supplied "admin" role. Admins are seeded
+    // by a backend script (see scripts/seedAdmin.js), never self-registered.
+    const allowedSelfRoles = ["patient", "doctor"];
+    const safeRole = allowedSelfRoles.includes(role) ? role : "patient";
+
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -30,7 +37,21 @@ const registerUser = async (req, res) => {
       name,
       email,
       password: hashedPassword,
-      role: role || "patient",
+      role: safeRole,
+    });
+
+    if (user.role === "doctor") {
+      await Doctor.create({
+        userId: user._id,
+        name: user.name,
+        status: "incomplete",
+      });
+    }
+
+    await AuditLog.create({
+      action: "USER_REGISTERED",
+      user: user._id,
+      details: `New ${user.role} registered: ${user.email}`,
     });
 
     res.status(201).json({
@@ -103,6 +124,12 @@ const loginUser = async (req, res) => {
         expiresIn: "7d",
       }
     );
+
+    await AuditLog.create({
+      action: "USER_LOGGED_IN",
+      user: user._id,
+      details: `${user.role} logged in.`,
+    });
 
     res.status(200).json({
       success: true,

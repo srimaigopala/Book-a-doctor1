@@ -5,10 +5,10 @@ const cors = require("cors");
 const connectDB = require("./config/db");
 
 const authRoutes = require("./routes/authRoutes");
-const doctorAuthRoutes = require("./routes/doctorAuthRoutes");
 const doctorRoutes = require("./routes/doctorRoutes");
 const appointmentRoutes = require("./routes/appointmentRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
+const adminRoutes = require("./routes/adminRoutes");
 
 dotenv.config();
 
@@ -23,11 +23,8 @@ app.get("/", (req, res) => {
   res.send("Book A Doctor Backend Running");
 });
 
-// Patient Auth Routes
+// Auth Routes (patients, doctors and admins all authenticate here)
 app.use("/api/auth", authRoutes);
-
-// Doctor Auth Routes
-app.use("/api/doctor-auth", doctorAuthRoutes);
 
 // Doctor Routes
 app.use("/api/doctors", doctorRoutes);
@@ -38,7 +35,10 @@ app.use("/api/appointments", appointmentRoutes);
 // Dashboard Routes
 app.use("/api/dashboard", dashboardRoutes);
 
-const PORT = process.env.PORT || 5000;
+// Admin Routes
+app.use("/api/admin", adminRoutes);
+
+const PORT = process.env.PORT || 5005;
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

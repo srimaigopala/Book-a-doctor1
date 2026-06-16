@@ -1,21 +1,14 @@
 const Doctor = require("../models/Doctor");
 
-// Add Doctor
-const addDoctor = async (req, res) => {
+// Get All Approved Doctors (what patients browse)
+const getDoctors = async (req, res) => {
   try {
-    const { name, specialization, experience, fees } = req.body;
+    const doctors = await Doctor.find({ status: "approved" });
 
-    const doctor = await Doctor.create({
-      name,
-      specialization,
-      experience,
-      fees,
-    });
-
-    res.status(201).json({
+    res.status(200).json({
       success: true,
-      message: "Doctor Added Successfully",
-      doctor,
+      count: doctors.length,
+      doctors,
     });
   } catch (error) {
     console.log(error);
@@ -27,10 +20,12 @@ const addDoctor = async (req, res) => {
   }
 };
 
-// Get All Doctors
-const getDoctors = async (req, res) => {
+// Get All Doctors regardless of status (admin management view)
+const getAllDoctorsAdmin = async (req, res) => {
   try {
-    const doctors = await Doctor.find();
+    const doctors = await Doctor.find()
+      .populate("userId", "name email")
+      .sort({ createdAt: -1 });
 
     res.status(200).json({
       success: true,
@@ -138,10 +133,64 @@ const deleteDoctor = async (req, res) => {
   }
 };
 
+const submitOnboarding = async (req, res) => {
+  try {
+    const { specialization, experience, fees } = req.body;
+    // We assume the user ID is attached to the request by the auth middleware
+    const userId = req.user.id;
+
+    let doctor = await Doctor.findOne({ userId });
+
+    if (!doctor) {
+      doctor = new Doctor({ userId, name: req.user.name || "Doctor" });
+    }
+
+    doctor.specialization = specialization;
+    doctor.experience = experience;
+    doctor.fees = fees;
+    doctor.status = "pending";
+    await doctor.save();
+
+    const AuditLog = require("../models/AuditLog");
+    await AuditLog.create({
+      action: "DOCTOR_ONBOARDING_SUBMITTED",
+      user: userId,
+      details: `Doctor ${doctor.name} submitted onboarding details and is pending approval.`,
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Onboarding submitted successfully. Waiting for admin approval.",
+      doctor,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "Server Error",
+    });
+  }
+};
+
+const getDoctorProfile = async (req, res) => {
+  try {
+    const doctor = await Doctor.findOne({ userId: req.user.id });
+    if (!doctor) {
+      return res.status(404).json({ success: false, message: "Doctor profile not found" });
+    }
+    res.status(200).json({ success: true, doctor });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ success: false, message: "Server Error" });
+  }
+};
+
 module.exports = {
-  addDoctor,
   getDoctors,
+  getAllDoctorsAdmin,
   getSingleDoctor,
   updateDoctor,
   deleteDoctor,
+  submitOnboarding,
+  getDoctorProfile,
 };

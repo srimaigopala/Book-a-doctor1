@@ -1,10 +1,7 @@
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext.jsx';
-import { UserCheck2, UserX2, Briefcase, IndianRupee, Edit2 } from 'lucide-react';
 
 export default function DoctorCard({ doctor }) {
   const navigate = useNavigate();
-  const { isAdmin } = useAuth();
 
   const { _id, name, specialization, experience, fees, available } = doctor;
 
@@ -29,7 +26,7 @@ export default function DoctorCard({ doctor }) {
                 Offline
               </span>
             )}
-            <span className="text-xs text-slate-450 text-slate-500 font-semibold">• {experience} yrs exp</span>
+            <span className="text-xs text-slate-500 font-semibold">• {experience} yrs exp</span>
           </div>
 
           <h3 className="font-extrabold text-base text-slate-900 group-hover:text-blue-600 transition-colors leading-tight truncate">
@@ -45,7 +42,7 @@ export default function DoctorCard({ doctor }) {
       <div className="pt-4 mt-4 border-t border-slate-50 flex items-center justify-between">
         <div>
           <span className="text-xs text-slate-400 font-bold uppercase tracking-wider block">Fee</span>
-          <span className="font-extrabold text-blue-650 text-base">₹{fees}</span>
+          <span className="font-extrabold text-blue-600 text-base">₹{fees}</span>
         </div>
 
         <div className="flex items-center gap-1.5">
@@ -55,16 +52,6 @@ export default function DoctorCard({ doctor }) {
           >
             Check Schedule
           </button>
-
-          {isAdmin && (
-            <button
-              onClick={() => navigate(`/edit-doctor/${_id}`)}
-              className="p-2 text-slate-500 hover:text-blue-600 hover:bg-blue-50 border border-slate-100 hover:border-blue-100 rounded-xl transition-colors cursor-pointer"
-              title="Edit Profile"
-            >
-              <Edit2 className="h-4 w-4" />
-            </button>
-          )}
         </div>
       </div>
 

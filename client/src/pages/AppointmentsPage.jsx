@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import api from '../api/axios.js';
 import { useAuth } from '../context/AuthContext.jsx';
 import AppointmentCard from '../components/AppointmentCard.jsx';
@@ -6,13 +7,14 @@ import Loader from '../components/Loader.jsx';
 import { CalendarCheck2, Search, Filter, ShieldCheck, Inbox } from 'lucide-react';
 
 export default function AppointmentsPage() {
-  const { user, isAdmin } = useAuth();
-  
+  const { isAdmin } = useAuth();
+  const navigate = useNavigate();
+
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
-  
+
   // Filtering and Searching
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
@@ -21,7 +23,9 @@ export default function AppointmentsPage() {
     try {
       setLoading(true);
       setErrorMsg('');
-      const res = await api.get('/api/appointments/all');
+      // Admins see everything; patients see only their own.
+      const endpoint = isAdmin ? '/api/appointments/all' : '/api/appointments/me';
+      const res = await api.get(endpoint);
       if (res.data.success && res.data.appointments) {
         setAppointments(res.data.appointments);
       } else {
@@ -37,7 +41,8 @@ export default function AppointmentsPage() {
 
   useEffect(() => {
     fetchAppointmentsList();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAdmin]);
 
   // Update Status Action (Admin only)
   const handleUpdateStatus = async (id, statusValue) => {
@@ -82,16 +87,8 @@ export default function AppointmentsPage() {
     }
   };
 
-  // Segregate appointments based on current authenticated patient session vs admin dashboard access
-  const visibleAppointments = appointments.filter((apt) => {
-  if (!isAdmin) {
-    return (
-      apt.user?._id === user?._id ||
-      apt.user?._id === user?.id
-    );
-  }
-  return true;
-});
+  // The server already scopes results (admins get all, patients get their own).
+  const visibleAppointments = appointments;
 
   // Apply search query and status filter on visible listings
  const filteredAppointments = visibleAppointments.filter((apt) => {
@@ -134,18 +131,18 @@ export default function AppointmentsPage() {
 
         {/* Messaging Toasts */}
         {errorMsg && (
-          <div className="mb-6 p-4 rounded-xl bg-rose-50 border border-rose-150 text-red-700 text-sm font-semibold">
+          <div className="mb-6 p-4 rounded-xl bg-rose-50 border border-rose-200 text-red-700 text-sm font-semibold">
             {errorMsg}
           </div>
         )}
         {successMsg && (
-          <div className="mb-6 p-4 rounded-xl bg-emerald-50 border border-emerald-150 text-emerald-850 text-emerald-800 text-sm font-semibold">
+          <div className="mb-6 p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-emerald-800 text-sm font-semibold">
             ✓ {successMsg}
           </div>
         )}
 
         {/* Searching and Filter Tabs row */}
-        <div className="bg-white border border-slate-150 p-4 rounded-2xl shadow-3xs mb-6 space-y-4">
+        <div className="bg-white border border-slate-200 p-4 rounded-2xl shadow-xs mb-6 space-y-4">
           <div className="flex flex-col sm:flex-row gap-2.5">
             <div className="relative flex-1">
               <Search className="absolute left-3.5 top-3.5 h-4 w-4 text-slate-400" />
@@ -170,7 +167,7 @@ export default function AppointmentsPage() {
                 className={`px-3 py-1 font-semibold text-xs rounded-full border transition-all cursor-pointer ${
                   statusFilter === st
                     ? 'bg-blue-600 text-white border-blue-600'
-                    : 'bg-slate-50 hover:bg-slate-100 text-slate-650 text-slate-700 border-slate-200'
+                    : 'bg-slate-50 hover:bg-slate-100 text-slate-600 text-slate-700 border-slate-200'
                 }`}
               >
                 {st}
@@ -183,7 +180,7 @@ export default function AppointmentsPage() {
         {loading ? (
           <Loader message="Accessing calendar registry charts..." />
         ) : filteredAppointments.length === 0 ? (
-          <div className="bg-white border border-slate-150 rounded-2xl p-16 text-center shadow-3xs">
+          <div className="bg-white border border-slate-200 rounded-2xl p-16 text-center shadow-xs">
             <div className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-slate-50 text-slate-400 mb-3">
               <Inbox className="h-6 w-6" />
             </div>

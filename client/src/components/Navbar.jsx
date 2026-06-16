@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext.jsx';
 import { Stethoscope, LogOut, Menu, X, Calendar, LayoutDashboard, Shield, PlusCircle, User } from 'lucide-react';
 
 export default function Navbar() {
-  const { user, logout, isAdmin } = useAuth();
+  const { user, logout, isAdmin, isDoctor } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
@@ -35,14 +35,14 @@ export default function Navbar() {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-8">
             <Link to="/" className={isActive('/')}>Home</Link>
-            <Link to="/doctors" className={isActive('/doctors')}>Doctors</Link>
             
             {user && (
               <>
-                <Link to="/appointments" className={isActive('/appointments')}>Appointments</Link>
-                {isAdmin && (
-                  <Link to="/dashboard" className={isActive('/dashboard')}>Dashboard</Link>
-                )}
+                {!isDoctor && <Link to="/doctors" className={isActive('/doctors')}>Doctors</Link>}
+                {!isDoctor && <Link to="/appointments" className={isActive('/appointments')}>Appointments</Link>}
+                {isAdmin && <Link to="/admin-dashboard" className={isActive('/admin-dashboard')}>Dashboard</Link>}
+                {isDoctor && <Link to="/doctor-dashboard" className={isActive('/doctor-dashboard')}>Dashboard</Link>}
+                {!isAdmin && !isDoctor && <Link to="/patient-dashboard" className={isActive('/patient-dashboard')}>Dashboard</Link>}
               </>
             )}
           </div>
@@ -58,8 +58,12 @@ export default function Navbar() {
                       <span className="inline-flex items-center gap-0.5 px-2 py-0.5 text-[10px] uppercase font-bold tracking-wider rounded-full bg-purple-50 text-purple-700 border border-purple-200">
                         <Shield className="h-2.5 w-2.5" /> Admin
                       </span>
+                    ) : isDoctor ? (
+                      <span className="inline-flex items-center gap-0.5 px-2 py-0.5 text-[10px] uppercase font-bold tracking-wider rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                        <Stethoscope className="h-2.5 w-2.5" /> Doctor
+                      </span>
                     ) : (
-                      <span className="inline-flex items-center gap-0.5 px-2 py-0.5 text-[10px] uppercase font-bold tracking-wider rounded-full bg-blue-50 text-blue-750 border border-blue-200">
+                      <span className="inline-flex items-center gap-0.5 px-2 py-0.5 text-[10px] uppercase font-bold tracking-wider rounded-full bg-blue-50 text-blue-700 border border-blue-200">
                         <User className="h-2.5 w-2.5" /> Patient
                       </span>
                     )}
@@ -116,41 +120,34 @@ export default function Navbar() {
           >
             Home
           </Link>
-          <Link
-            to="/doctors"
-            onClick={() => setIsOpen(false)}
-            className="block px-3 py-2 rounded-lg text-base font-medium text-slate-700 hover:bg-slate-50 hover:text-blue-600"
-          >
-            Find Doctors
-          </Link>
 
           {user && (
             <>
+              {!isDoctor && (
+                <Link
+                  to="/doctors"
+                  onClick={() => setIsOpen(false)}
+                  className="block px-3 py-2 rounded-lg text-base font-medium text-slate-700 hover:bg-slate-50 hover:text-blue-600"
+                >
+                  Find Doctors
+                </Link>
+              )}
+              {!isDoctor && (
+                <Link
+                  to="/appointments"
+                  onClick={() => setIsOpen(false)}
+                  className="block px-3 py-2 rounded-lg text-base font-medium text-slate-700 hover:bg-slate-50 hover:text-blue-600"
+                >
+                  My Appointments
+                </Link>
+              )}
               <Link
-                to="/appointments"
+                to={isAdmin ? "/admin-dashboard" : isDoctor ? "/doctor-dashboard" : "/patient-dashboard"}
                 onClick={() => setIsOpen(false)}
                 className="block px-3 py-2 rounded-lg text-base font-medium text-slate-700 hover:bg-slate-50 hover:text-blue-600"
               >
-                My Appointments
+                {isAdmin ? 'Admin Dashboard' : isDoctor ? 'Doctor Dashboard' : 'Patient Dashboard'}
               </Link>
-              {isAdmin && (
-                <>
-                  <Link
-                    to="/dashboard"
-                    onClick={() => setIsOpen(false)}
-                    className="block px-3 py-2 rounded-lg text-base font-medium text-slate-700 hover:bg-slate-50 hover:text-blue-600"
-                  >
-                    Admin Dashboard
-                  </Link>
-                  <Link
-                    to="/add-doctor"
-                    onClick={() => setIsOpen(false)}
-                    className="block px-3 py-2 rounded-lg text-base font-medium text-slate-700 hover:bg-slate-50 hover:text-blue-600"
-                  >
-                    Add Doctor
-                  </Link>
-                </>
-              )}
             </>
           )}
 
@@ -164,13 +161,15 @@ export default function Navbar() {
                   </div>
                   {isAdmin ? (
                     <span className="px-2 py-0.5 text-[10px] font-bold uppercase rounded bg-purple-100 text-purple-700">Admin</span>
+                  ) : isDoctor ? (
+                    <span className="px-2 py-0.5 text-[10px] font-bold uppercase rounded bg-emerald-100 text-emerald-700">Doctor</span>
                   ) : (
                     <span className="px-2 py-0.5 text-[10px] font-bold uppercase rounded bg-blue-100 text-blue-700">Patient</span>
                   )}
                 </div>
                 <button
                   onClick={handleLogout}
-                  className="w-full text-left flex items-center gap-2 px-3 py-2 rounded-lg text-base font-semibold text-red-650 hover:bg-red-50 text-red-600"
+                  className="w-full text-left flex items-center gap-2 px-3 py-2 rounded-lg text-base font-semibold text-red-600 hover:bg-red-50"
                 >
                   <LogOut className="h-5 w-5" />
                   <span>Sign Out</span>
