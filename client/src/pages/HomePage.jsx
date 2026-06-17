@@ -177,7 +177,7 @@ export default function HomePage() {
             <div className="col-span-1 lg:col-span-7 space-y-6 text-center lg:text-left">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-bold rounded-full bg-blue-50 text-blue-700 border border-blue-100">
                 <HeartPulse className="h-3.5 w-3.5 text-blue-600 animate-pulse" />
-                MERN Certified Virtual Healthcare Portal
+                24/7 Virtual Healthcare Services
               </span>
               
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 tracking-tight leading-none font-display">
