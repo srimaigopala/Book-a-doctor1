@@ -146,7 +146,7 @@ npm run dev
 Frontend URL:
 
 ```bash
-http://localhost:5173
+http://localhost:3000
 ```
 
 ---
